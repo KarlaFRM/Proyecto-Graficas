@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!--Proyecto final para la material Graficas Computacionales
+//Cloth simulation
+//Autor: Karla Fabiola Ramirez Martinez-->
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Proyecto final</title>
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'><link rel="stylesheet" href="./style.css">
+		<link rel="stylesheet" href="../libs/jquery-ui/jquery-ui.css" />
+		<link rel="stylesheet" href="../libs/colorpicker/css/colorpicker.css" />
+		<link rel="stylesheet" href="../css/main.css" />
+		<link rel="stylesheet" href="../css/threejsmaterials.css" />
+</head>
+<body >
+      <div class="row">
+        <div class="col-md-12" id="canvas-wrapper"></div>
+      </div>
+    </div>
+    <script type="x-shader/x-fragment" id="fragmentShaderDepth">
+      uniform sampler2D texture;
+      varying vec2 vUV;
+
+      vec4 pack_depth( const in float depth ) {
+
+      const vec4 bit_shift = vec4( 256.0 * 256.0 * 256.0, 256.0 * 256.0, 256.0, 1.0 );
+      const vec4 bit_mask  = vec4( 0.0, 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0 );
+      vec4 res = fract( depth * bit_shift );
+      res -= res.xxyz * bit_mask;
+      return res;
+
+      }
+
+      void main() {
+
+      vec4 pixel = texture2D( texture, vUV );
+
+      if ( pixel.a < 0.5 ) discard;
+
+      gl_FragData[ 0 ] = pack_depth( gl_FragCoord.z );
+
+      }
+    </script>
+    <script type="x-shader/x-fragment" id="vertexShaderDepth">
+      varying vec2 vUV;
+
+      void main() {
+
+      vUV = 0.75 * uv;
+
+      vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+      gl_Position = projectionMatrix * mvPosition;
+
+      }
+    </script>
+  </body>
+</html>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r70/three.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
